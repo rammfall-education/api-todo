@@ -1,0 +1,142 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  user
+  admin
+}
+
+enum Priority {
+  P1
+  P2
+  P3
+  P4
+  P5
+  P6
+}
+
+enum Theme {
+  dark
+  light
+}
+
+enum Language {
+  en
+  ua
+}
+
+enum SessionType {
+  factored
+  access
+}
+
+model User {
+  id        Int @id @default(autoincrement())
+  username  String @unique
+  email     String @unique
+  password  String
+  role      Role @default(user)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  profile   Profile?
+  projects  Project[]
+  comments  Comment[]
+  settings  Settings?
+  secret    Secret?
+  sessions  Session[]
+}
+
+model Session {
+  id             String @id @unique
+  accessToken    String
+  refreshToken   String
+  type           SessionType
+  deadline       DateTime
+  lastUpdate     DateTime @updatedAt
+  ip             String
+  device         String
+  userId         Int
+  user           User @relation(fields: [userId], references: [id])
+}
+
+model Settings {
+  userId               Int @id @unique
+  user                 User @relation(fields: [userId], references: [id])
+  secondFactorEnabled  Boolean @default(false)
+  theme                Theme
+  language             Language @default(en)
+  emailConfirmed       Boolean @default(false)
+}
+
+model Secret {
+  userId     Int @id @unique
+  user       User @relation(fields: [userId], references: [id])
+  secretKey  String
+}
+
+model Profile {
+  id           Int @id @default(autoincrement())
+  firstName    String
+  lastName     String
+  phoneNumber  String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  user         User @relation(references: [id], fields: [userId])
+  userId       Int @unique
+}
+
+model Project {
+  id                  Int @id @default(autoincrement())
+  title               String
+  color               String
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+  tasks               Task[]
+  user                User @relation(fields: [userId], references: [id])
+  userId              Int
+}
+
+model Status {
+  id         Int @id @default(autoincrement())
+  name       String
+  color      String
+  tasks      Task[]
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+model Task {
+  id           Int @id @default(autoincrement())
+  name         String
+  isCompleted  Boolean @default(false)
+  description  String?
+  priority     Priority @default(P4)
+  deadline     DateTime?
+  comments     Comment[]
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  projectId    Int
+  project      Project @relation(fields: [projectId], references: [id])
+  statusId     Int?
+  status       Status? @relation(fields: [statusId], references: [id])
+  parentId     Int?
+  parent       Task? @relation("Parent task", fields: [parentId], references: [id])
+  subtasks     Task[] @relation("Parent task")
+}
+
+model Comment {
+  id          Int @id @default(autoincrement())
+  text        String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  taskId      Int
+  task        Task @relation(fields: [taskId], references: [id])
+  authorId    Int
+  author      User @relation(fields: [authorId], references: [id])
+}
