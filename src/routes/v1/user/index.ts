@@ -1,7 +1,6 @@
 import { FastifyPluginCallback } from 'fastify';
 import { createUser } from './create';
-import { loginUser } from './login';
-import { refreshUser } from './refresh';
+import { session } from './session';
 
 export const user: FastifyPluginCallback = (instance, _, done) => {
   instance.post(
@@ -39,61 +38,9 @@ export const user: FastifyPluginCallback = (instance, _, done) => {
     createUser
   );
 
-  instance.post(
-    '/login',
-    {
-      schema: {
-        tags: ['User'],
-        description: 'Login user',
-        get summary() {
-          return this.description;
-        },
-        body: {
-          type: 'object',
-          properties: {
-            email: {
-              type: 'string',
-              minLength: 6,
-              maxLength: 50,
-            },
-            password: {
-              type: 'string',
-              minLength: 8,
-              maxLength: 50,
-            },
-          },
-          required: ['email', 'password'],
-        },
-      },
-    },
-    loginUser
-  );
-
-  instance.post(
-    '/refresh',
-    {
-      schema: {
-        tags: ['User'],
-        description: 'Refresh user',
-        get summary() {
-          return this.description;
-        },
-        headers: {
-          type: 'object',
-          properties: {
-            refreshToken: {
-              type: 'string',
-            },
-            sessionId: {
-              type: 'string',
-            },
-          },
-          required: ['refreshToken', 'sessionId'],
-        },
-      },
-    },
-    refreshUser
-  );
+  instance.register(session, {
+    prefix: '/session',
+  });
 
   done();
 };

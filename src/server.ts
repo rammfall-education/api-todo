@@ -7,6 +7,7 @@ import fastifyFormBody from '@fastify/formbody';
 import fastifySwagger from '@fastify/swagger';
 import fastifySwaggerUi from '@fastify/swagger-ui';
 import { v1 } from './routes/v1';
+import { auth } from './hooks/auth';
 
 const server = fastify({
   logger: true,
@@ -26,6 +27,7 @@ server.register(fastifyCsrf);
 server.register(fastifyFormBody);
 server.register(fastifySwagger);
 server.register(fastifySwaggerUi);
+server.register(auth);
 
 server.register(
   (instance, _, done) => {

@@ -1,18 +1,15 @@
-import { FastifyRequest, RouteHandler } from 'fastify';
+import { RouteHandler } from 'fastify';
 import { hash } from 'bcrypt';
 
 import { prismaClient } from '../../../initializers/db';
 import { DEFAULT_USER_THEME, HASH_ROUNDS } from '../../../constants';
 
-export const createUser: RouteHandler = async (
-  request: FastifyRequest,
-  reply
-) => {
-  const { username, password, email } = request.body as {
-    username: string;
-    password: string;
-    email: string;
-  };
+import { User } from '@prisma/client';
+
+export const createUser: RouteHandler<{
+  Body: Pick<User, 'username' | 'email' | 'password'>;
+}> = async (request, reply) => {
+  const { username, password, email } = request.body;
 
   if (await prismaClient.user.findFirst({ where: { email } })) {
     reply.status(400);

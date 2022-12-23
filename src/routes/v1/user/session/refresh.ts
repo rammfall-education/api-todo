@@ -3,20 +3,22 @@ import { sign } from 'jsonwebtoken';
 import { v4 } from 'uuid';
 import { formatISO, addDays, isBefore } from 'date-fns';
 
-import { prismaClient } from '../../../initializers/db';
-import { JWT_SECRET } from '../../../config';
-import { DEADLINE_SESSION, EXPIRES_ACCESS_TOKEN } from '../../../constants';
+import { prismaClient } from '../../../../initializers/db';
+import { JWT_SECRET } from '../../../../config';
+import { DEADLINE_SESSION, EXPIRES_ACCESS_TOKEN } from '../../../../constants';
 
-export const refreshUser: RouteHandler = async (request, reply) => {
+export const refreshUser: RouteHandler<{
+  Headers: {
+    'user-agent': string;
+    refreshToken: string;
+    sessionid: string;
+  };
+}> = async (request, reply) => {
   const {
     'user-agent': device,
     refreshToken,
-    sessionId,
-  } = request.headers as {
-    'user-agent': string;
-    refreshToken: string;
-    sessionId: string;
-  };
+    sessionid: sessionId,
+  } = request.headers;
   const { ip } = request;
   const currentSession = await prismaClient.session.findFirst({
     where: {

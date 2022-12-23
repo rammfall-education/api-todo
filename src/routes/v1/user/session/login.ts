@@ -1,21 +1,18 @@
 import { FastifyRequest, RouteHandler } from 'fastify';
+import { User } from '@prisma/client';
 import { compare } from 'bcrypt';
 import { sign } from 'jsonwebtoken';
 import { v4 } from 'uuid';
 import { formatISO, addDays } from 'date-fns';
 
-import { prismaClient } from '../../../initializers/db';
-import { JWT_SECRET } from '../../../config';
-import { DEADLINE_SESSION, EXPIRES_ACCESS_TOKEN } from '../../../constants';
+import { prismaClient } from '../../../../initializers/db';
+import { JWT_SECRET } from '../../../../config';
+import { DEADLINE_SESSION, EXPIRES_ACCESS_TOKEN } from '../../../../constants';
 
-export const loginUser: RouteHandler = async (
-  request: FastifyRequest,
-  reply
-) => {
-  const { password, email } = request.body as {
-    password: string;
-    email: string;
-  };
+export const loginUser: RouteHandler<{
+  Body: Pick<User, 'password' | 'email'>;
+}> = async (request, reply) => {
+  const { password, email } = request.body;
   const { 'user-agent': device } = request.headers as {
     'user-agent': string;
   };
