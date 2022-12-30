@@ -1,6 +1,7 @@
 import { FastifyPluginCallback } from 'fastify';
 import { createUser } from './create';
 import { session } from './session';
+import { twoFactor } from './2fa';
 
 export const user: FastifyPluginCallback = (instance, _, done) => {
   instance.post(
@@ -40,6 +41,10 @@ export const user: FastifyPluginCallback = (instance, _, done) => {
 
   instance.register(session, {
     prefix: '/session',
+  });
+
+  instance.register(twoFactor, {
+    prefix: '/2fa',
   });
 
   done();

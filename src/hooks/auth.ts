@@ -1,22 +1,28 @@
 import fastifyPlugin from 'fastify-plugin';
 import { verify, JsonWebTokenError } from 'jsonwebtoken';
+
 import { prismaClient } from '../initializers/db';
 import { JWT_SECRET } from '../config';
-import { FastifyRequest } from 'fastify';
+import { SessionType } from '@prisma/client';
 
 export const auth = fastifyPlugin(
-  async (instance, opts) => {
+  async (instance) => {
     instance.decorateRequest('user', {});
 
-    instance.addHook<{ Headers: { sessionid: string; accessToken: string } }>(
+    instance.addHook<{ Headers: { sessionid: string; accesstoken: string } }>(
       'preHandler',
       async (request, reply) => {
-        const { sessionid: sessionId, accessToken } = request.headers;
+        const { withAuth, withTwoFAAuth } = request.routeConfig;
+        if (!withAuth && !withTwoFAAuth) return;
+
+        const { sessionid: sessionId, accesstoken: accessToken } =
+          request.headers;
 
         const session = await prismaClient.session.findFirst({
           where: {
             id: sessionId,
             accessToken,
+            type: withAuth ? SessionType.access : SessionType.factored,
           },
         });
 
@@ -30,22 +36,23 @@ export const auth = fastifyPlugin(
 
             if (user) {
               request.user = user;
+              return;
             }
           } catch (err) {
             reply.status(401);
 
             if (err instanceof JsonWebTokenError) {
-              return {
+              return reply.send({
                 message: err.message,
-              };
+              });
             }
           }
         }
 
         reply.status(401);
-        return {
+        return reply.send({
           message: 'Session not found',
-        };
+        });
       }
     );
   },

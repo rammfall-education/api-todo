@@ -14,6 +14,11 @@ declare module 'fastify' {
   interface FastifyRequest {
     user: User;
   }
+
+  interface FastifyContextConfig {
+    withAuth?: boolean;
+    withTwoFAAuth?: boolean;
+  }
 }
 
 import server from './server';

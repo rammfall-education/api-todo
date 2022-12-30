@@ -50,6 +50,8 @@ model User {
   settings  Settings?
   secret    Secret?
   sessions  Session[]
+  wizzard   Wizzard?
+  recovery  RecoveryKey[]
 }
 
 model Session {
@@ -71,7 +73,21 @@ model Settings {
   secondFactorEnabled  Boolean @default(false)
   theme                Theme
   language             Language @default(en)
-  emailConfirmed       Boolean @default(false)
+}
+
+model RecoveryKey {
+  id           Int @id @default(autoincrement())
+  position     Int
+  word         String
+  userId       Int
+  user         User @relation(fields: [userId], references: [id])
+}
+
+model Wizzard {
+  userId                    Int @id @unique
+  user                      User @relation(fields: [userId], references: [id])
+  isEmailConfirmed          Boolean @default(false)
+  isTwoFactorEnableTry      Boolean @default(false)
 }
 
 model Secret {

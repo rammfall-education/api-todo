@@ -1,5 +1,5 @@
 import { FastifyRequest, RouteHandler } from 'fastify';
-import { User } from '@prisma/client';
+import { SessionType, User } from '@prisma/client';
 import { compare } from 'bcrypt';
 import { sign } from 'jsonwebtoken';
 import { v4 } from 'uuid';
@@ -58,7 +58,9 @@ export const loginUser: RouteHandler<{
       accessToken,
       refreshToken,
       ip,
-      type: user.settings?.secondFactorEnabled ? 'factored' : 'access',
+      type: user.settings?.secondFactorEnabled
+        ? SessionType.factored
+        : SessionType.access,
       device,
       deadline: formatISO(addDays(new Date(), DEADLINE_SESSION)),
     },

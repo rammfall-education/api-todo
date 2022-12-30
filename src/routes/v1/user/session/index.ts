@@ -1,6 +1,8 @@
 import { FastifyPluginCallback } from 'fastify';
 import { refreshUser } from './refresh';
 import { loginUser } from './login';
+import { allSessions } from './all';
+import { dropSession } from './drop';
 
 export const session: FastifyPluginCallback = (instance, opts, done) => {
   instance.post(
@@ -32,9 +34,6 @@ export const session: FastifyPluginCallback = (instance, opts, done) => {
   instance.post(
     '/start',
     {
-      config: {
-        withAuth: true,
-      },
       schema: {
         tags: ['User'],
         description: 'Login user',
@@ -60,6 +59,67 @@ export const session: FastifyPluginCallback = (instance, opts, done) => {
       },
     },
     loginUser
+  );
+
+  instance.get(
+    '/list',
+    {
+      config: {
+        withAuth: true,
+      },
+      schema: {
+        tags: ['User'],
+        description: 'All sessions',
+        get summary() {
+          return this.description;
+        },
+        headers: {
+          type: 'object',
+          properties: {
+            accessToken: {
+              type: 'string',
+            },
+          },
+          required: ['accessToken'],
+        },
+      },
+    },
+    allSessions
+  );
+
+  instance.delete(
+    '/:id',
+    {
+      config: {
+        withAuth: true,
+      },
+      schema: {
+        tags: ['User'],
+        description: 'Drop session',
+        get summary() {
+          return this.description;
+        },
+        headers: {
+          type: 'object',
+          properties: {
+            accessToken: {
+              type: 'string',
+            },
+          },
+          required: ['accessToken'],
+        },
+        params: {
+          type: 'object',
+          properties: {
+            id: {
+              type: 'string',
+            },
+          },
+          required: ['id'],
+        },
+      },
+    },
+    dropSession
   );
 
   done();

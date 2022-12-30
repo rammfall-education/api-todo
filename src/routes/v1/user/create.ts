@@ -16,6 +16,7 @@ export const createUser: RouteHandler<{
 
     return {
       message: 'User with this email already exists',
+      field: 'email',
     };
   }
 
@@ -24,6 +25,7 @@ export const createUser: RouteHandler<{
 
     return {
       message: 'User with this username already exists',
+      field: 'username',
     };
   }
 
@@ -39,6 +41,12 @@ export const createUser: RouteHandler<{
       userId: user.id,
       secondFactorEnabled: false,
       theme: DEFAULT_USER_THEME,
+    },
+  });
+
+  await prismaClient.wizzard.create({
+    data: {
+      userId: user.id,
     },
   });
 
