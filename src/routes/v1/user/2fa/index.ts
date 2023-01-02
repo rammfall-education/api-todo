@@ -4,6 +4,7 @@ import { getSecret } from './secret';
 import { confirm2FA } from './confirm';
 import { startSession } from './start';
 import { recovery } from './recovery';
+import { recoveryStart } from './recoveryStart';
 
 export const twoFactor: FastifyPluginCallback = (instance, opts, done) => {
   const tags = ['2FA'];
@@ -113,6 +114,32 @@ export const twoFactor: FastifyPluginCallback = (instance, opts, done) => {
       },
     },
     recovery
+  );
+
+  instance.post(
+    '/recovery_start',
+    {
+      config: {
+        withTwoFAAuth: true,
+      },
+      schema: {
+        tags,
+        description: 'Start session with recovery code',
+        get summary() {
+          return this.description;
+        },
+        body: {
+          type: 'object',
+          properties: {
+            code: {
+              type: 'string',
+            },
+          },
+          required: ['code'],
+        },
+      },
+    },
+    recoveryStart
   );
 
   done();

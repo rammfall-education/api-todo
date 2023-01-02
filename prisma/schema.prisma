@@ -50,7 +50,7 @@ model User {
   settings  Settings?
   secret    Secret?
   sessions  Session[]
-  wizzard   Wizzard?
+  wizard   Wizard?
   recovery  RecoveryKey[]
 }
 
@@ -64,12 +64,12 @@ model Session {
   ip             String
   device         String
   userId         Int
-  user           User @relation(fields: [userId], references: [id])
+  user           User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model Settings {
   userId               Int @id @unique
-  user                 User @relation(fields: [userId], references: [id])
+  user                 User @relation(fields: [userId], references: [id], onDelete: Cascade)
   secondFactorEnabled  Boolean @default(false)
   theme                Theme
   language             Language @default(en)
@@ -80,19 +80,20 @@ model RecoveryKey {
   position     Int
   word         String
   userId       Int
-  user         User @relation(fields: [userId], references: [id])
+  user         User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
-model Wizzard {
+model Wizard {
   userId                    Int @id @unique
-  user                      User @relation(fields: [userId], references: [id])
+  user                      User @relation(fields: [userId], references: [id], onDelete: Cascade)
   isEmailConfirmed          Boolean @default(false)
   isTwoFactorEnableTry      Boolean @default(false)
+  isProfileFilled           Boolean @default(false)
 }
 
 model Secret {
   userId     Int @id @unique
-  user       User @relation(fields: [userId], references: [id])
+  user       User @relation(fields: [userId], references: [id], onDelete: Cascade)
   secretKey  String
 }
 
@@ -103,7 +104,7 @@ model Profile {
   phoneNumber  String?
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
-  user         User @relation(references: [id], fields: [userId])
+  user         User @relation(references: [id], fields: [userId], onDelete: Cascade)
   userId       Int @unique
 }
 
@@ -114,7 +115,7 @@ model Project {
   createdAt           DateTime @default(now())
   updatedAt           DateTime @updatedAt
   tasks               Task[]
-  user                User @relation(fields: [userId], references: [id])
+  user                User @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId              Int
 }
 
@@ -138,11 +139,11 @@ model Task {
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
   projectId    Int
-  project      Project @relation(fields: [projectId], references: [id])
+  project      Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
   statusId     Int?
-  status       Status? @relation(fields: [statusId], references: [id])
+  status       Status? @relation(fields: [statusId], references: [id], onDelete: Cascade)
   parentId     Int?
-  parent       Task? @relation("Parent task", fields: [parentId], references: [id])
+  parent       Task? @relation("Parent task", fields: [parentId], references: [id], onDelete: Cascade)
   subtasks     Task[] @relation("Parent task")
 }
 
@@ -152,7 +153,7 @@ model Comment {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   taskId      Int
-  task        Task @relation(fields: [taskId], references: [id])
+  task        Task @relation(fields: [taskId], references: [id], onDelete: Cascade)
   authorId    Int
-  author      User @relation(fields: [authorId], references: [id])
+  author      User @relation(fields: [authorId], references: [id], onDelete: Cascade)
 }

@@ -2,6 +2,8 @@ import { FastifyPluginCallback } from 'fastify';
 import { createUser } from './create';
 import { session } from './session';
 import { twoFactor } from './2fa';
+import { profileRoutes } from './profile';
+import { wizardMain } from './wizard';
 
 export const user: FastifyPluginCallback = (instance, _, done) => {
   instance.post(
@@ -45,6 +47,14 @@ export const user: FastifyPluginCallback = (instance, _, done) => {
 
   instance.register(twoFactor, {
     prefix: '/2fa',
+  });
+
+  instance.register(profileRoutes, {
+    prefix: '/profile',
+  });
+
+  instance.register(wizardMain, {
+    prefix: '/wizard',
   });
 
   done();

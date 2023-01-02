@@ -6,6 +6,7 @@ declare global {
   namespace NodeJS {
     interface ProcessEnv {
       PORT: string;
+      SENDGRID_API_KEY: string;
     }
   }
 }

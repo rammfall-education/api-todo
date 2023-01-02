@@ -25,7 +25,7 @@ export const generateSecretKey: RouteHandler = async (request, reply) => {
     },
   });
 
-  await prismaClient.wizzard.update({
+  await prismaClient.wizard.update({
     where: {
       userId: user.id,
     },

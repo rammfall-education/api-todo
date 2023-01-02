@@ -46,7 +46,7 @@ export const confirm2FA: RouteHandler<{ Body: { code: string } }> = async (
         secondFactorEnabled: true,
       },
     });
-    await prismaClient.wizzard.update({
+    await prismaClient.wizard.update({
       where: {
         userId: user.id,
       },
@@ -58,7 +58,7 @@ export const confirm2FA: RouteHandler<{ Body: { code: string } }> = async (
       prismaClient.recoveryKey.create({
         data: {
           userId: user.id,
-          word: faker.word.preposition(),
+          word: faker.word.adjective(),
           position: index,
         },
       })

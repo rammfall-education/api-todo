@@ -44,7 +44,7 @@ export const createUser: RouteHandler<{
     },
   });
 
-  await prismaClient.wizzard.create({
+  await prismaClient.wizard.create({
     data: {
       userId: user.id,
     },
