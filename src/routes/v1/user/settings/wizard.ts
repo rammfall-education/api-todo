@@ -9,8 +9,14 @@ export const wizard: RouteHandler = async (request) => {
       userId: user.id,
     },
   });
+  const settings = await prismaClient.settings.findFirst({
+    where: {
+      userId: user.id,
+    },
+  });
 
   return {
     wizardProfile,
+    settings,
   };
 };

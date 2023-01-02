@@ -5,6 +5,7 @@ import { confirm2FA } from './confirm';
 import { startSession } from './start';
 import { recovery } from './recovery';
 import { recoveryStart } from './recoveryStart';
+import { disable2fa } from './disable';
 
 export const twoFactor: FastifyPluginCallback = (instance, opts, done) => {
   const tags = ['2FA'];
@@ -140,6 +141,23 @@ export const twoFactor: FastifyPluginCallback = (instance, opts, done) => {
       },
     },
     recoveryStart
+  );
+
+  instance.delete(
+    '/',
+    {
+      config: {
+        withAuth: true,
+      },
+      schema: {
+        tags,
+        description: 'Disable 2FA',
+        get summary() {
+          return this.description;
+        },
+      },
+    },
+    disable2fa
   );
 
   done();
