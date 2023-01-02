@@ -1,23 +1,23 @@
 import { FastifyPluginCallback } from 'fastify';
-import { createProfile } from './createProfile';
+import { wizard } from './wizard';
 
-const tags = ['Profile'];
-export const profileRoutes: FastifyPluginCallback = (instance, opts, done) => {
-  instance.post(
-    '/',
+const tags = ['Settings'];
+export const settings: FastifyPluginCallback = (instance, opts, done) => {
+  instance.get(
+    '/wizard',
     {
       config: {
         withAuth: true,
       },
       schema: {
         tags,
-        description: 'Create profile',
+        description: 'Get wizard profile',
         get summary() {
           return this.description;
         },
       },
     },
-    createProfile
+    wizard
   );
 
   done();

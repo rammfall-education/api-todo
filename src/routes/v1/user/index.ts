@@ -3,7 +3,7 @@ import { createUser } from './create';
 import { session } from './session';
 import { twoFactor } from './2fa';
 import { profileRoutes } from './profile';
-import { wizardMain } from './wizard';
+import { settings } from './settings';
 
 export const user: FastifyPluginCallback = (instance, _, done) => {
   instance.post(
@@ -53,8 +53,8 @@ export const user: FastifyPluginCallback = (instance, _, done) => {
     prefix: '/profile',
   });
 
-  instance.register(wizardMain, {
-    prefix: '/wizard',
+  instance.register(settings, {
+    prefix: '/settings',
   });
 
   done();
