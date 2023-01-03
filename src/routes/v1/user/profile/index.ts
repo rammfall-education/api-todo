@@ -1,6 +1,7 @@
 import { FastifyPluginCallback } from 'fastify';
 import { createProfile } from './createProfile';
 import { updateProfile } from './updateProfile';
+import { getProfile } from './getProfile';
 
 const tags = ['Profile'];
 export const profileRoutes: FastifyPluginCallback = (instance, opts, done) => {
@@ -66,6 +67,23 @@ export const profileRoutes: FastifyPluginCallback = (instance, opts, done) => {
       },
     },
     updateProfile
+  );
+
+  instance.get(
+    '/',
+    {
+      config: {
+        withAuth: true,
+      },
+      schema: {
+        tags,
+        description: 'Get profile',
+        get summary() {
+          return this.description;
+        },
+      },
+    },
+    getProfile
   );
 
   done();
