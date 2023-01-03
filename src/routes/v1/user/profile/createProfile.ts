@@ -35,6 +35,14 @@ export const createProfile: RouteHandler<{
       phoneNumber,
     },
   });
+  await prismaClient.wizard.update({
+    where: {
+      userId: user.id,
+    },
+    data: {
+      isProfileFilled: true,
+    },
+  });
 
   return {
     profile,
