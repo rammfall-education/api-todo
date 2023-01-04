@@ -50,8 +50,9 @@ model User {
   settings  Settings?
   secret    Secret?
   sessions  Session[]
-  wizard   Wizard?
+  wizard    Wizard?
   recovery  RecoveryKey[]
+  colors    Color[]
 }
 
 model Session {
@@ -108,10 +109,19 @@ model Profile {
   userId       Int @unique
 }
 
+model Color {
+  id              Int @id @default(autoincrement())
+  userId          Int
+  user            User @relation(references: [id], fields: [userId], onDelete: Cascade)
+  color           String
+  projects        Project[]
+}
+
 model Project {
   id                  Int @id @default(autoincrement())
   title               String
-  color               String
+  color               Color? @relation(fields: [colorId], references: [id], onDelete: SetNull)
+  colorId             Int?
   createdAt           DateTime @default(now())
   updatedAt           DateTime @updatedAt
   tasks               Task[]
